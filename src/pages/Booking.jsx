@@ -1,138 +1,108 @@
-import React from 'react'
+import React, { useState } from "react";
+import { db } from "../firebaseConfig";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 
-function Booking() {
+export default function Booking() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    datetime: "",
+    destination: "Điểm đến 1",
+    message: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // ✅ Cập nhật form khi người dùng nhập
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // ✅ Xử lý đặt phòng
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMessage("");
+
+    try {
+      console.log("🚀 Bắt đầu gửi booking...");
+
+      // Kiểm tra Firestore có hoạt động không
+      const testQuery = await getDocs(collection(db, "bookings"));
+      console.log("✅ Firestore hoạt động:", testQuery.docs.length, "documents.");
+
+      // ✅ Thêm vào Firestore
+      const bookingRef = await addDoc(collection(db, "bookings"), {
+        ...formData,
+        createdAt: new Date(),
+        paymentStatus: "pending",
+      });
+
+      console.log("🔥 Đặt phòng thành công! ID:", bookingRef.id);
+      alert("🎉 Đặt phòng thành công! Email xác nhận sẽ được gửi.");
+
+      // ✅ Gửi request đến backend
+      const backendURL = "http://localhost:5000/api/booking";
+      console.log("📡 Gửi request đến backend:", backendURL);
+
+      const response = await fetch(backendURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          datetime: formData.datetime,
+          destination: formData.destination,
+          message: formData.message || "Không có yêu cầu đặc biệt",
+          orderId: bookingRef.id,
+        }),
+      });
+
+      const responseData = await response.json();
+      
+      if (!response.ok) {
+        console.error("❌ Lỗi từ backend:", responseData);
+        throw new Error(responseData.message || "Lỗi không xác định từ server.");
+      }
+
+      console.log("✅ API backend gửi thành công!", responseData);
+      alert("📩 Email xác nhận đặt phòng đã được gửi!");
+    } catch (error) {
+      console.error("❌ Lỗi khi đặt phòng:", error);
+      setErrorMessage(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div>
-        <div className="container-fluid bg-primary py-5 mb-5 hero-header">
-    <div className="container py-5">
-      <div className="row justify-content-center py-5">
-        <div className="col-lg-10 pt-lg-5 mt-lg-5 text-center">
-          <h1 className="display-3 text-white animated slideInDown">Booking</h1>
-          <nav aria-label="breadcrumb">
-            <ol className="breadcrumb justify-content-center">
-              <li className="breadcrumb-item">
-                <a href="/">Home</a>
-              </li>
-              <li
-                className="breadcrumb-item text-white active"
-                aria-current="page"
-              >
-                Booking
-              </li>
-            </ol>
-          </nav>
-        </div>
-      </div>
-    </div>
-  </div>
-      {/* Process Start */}
-      <div className="container-xxl py-5">
-      <div className="container">
-        <div className="text-center pb-4 wow fadeInUp" data-wow-delay="0.1s">
-          <h6 className="section-title bg-white text-center text-primary px-3">
-            Process
-          </h6>
-          <h1 className="mb-5">3 Easy Steps</h1>
-        </div>
-        <div className="row gy-5 gx-4 justify-content-center">
-          <div
-            className="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp"
-            data-wow-delay="0.1s"
-          >
-            <div className="position-relative border border-primary pt-5 pb-4 px-4">
-              <div
-                className="d-inline-flex align-items-center justify-content-center bg-primary rounded-circle position-absolute top-0 start-50 translate-middle shadow"
-                style={{ width: 100, height: 100 }}
-              >
-                <i className="fa fa-globe fa-3x text-white" />
-              </div>
-              <h5 className="mt-4">Choose A Destination</h5>
-              <hr className="w-25 mx-auto bg-primary mb-1" />
-              <hr className="w-50 mx-auto bg-primary mt-0" />
-              <p className="mb-0">
-                Tempor erat elitr rebum clita dolor diam ipsum sit diam amet
-                diam eos erat ipsum et lorem et sit sed stet lorem sit
-              </p>
-            </div>
-          </div>
-          <div
-            className="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp"
-            data-wow-delay="0.3s"
-          >
-            <div className="position-relative border border-primary pt-5 pb-4 px-4">
-              <div
-                className="d-inline-flex align-items-center justify-content-center bg-primary rounded-circle position-absolute top-0 start-50 translate-middle shadow"
-                style={{ width: 100, height: 100 }}
-              >
-                <i className="fa fa-dollar-sign fa-3x text-white" />
-              </div>
-              <h5 className="mt-4">Pay Online</h5>
-              <hr className="w-25 mx-auto bg-primary mb-1" />
-              <hr className="w-50 mx-auto bg-primary mt-0" />
-              <p className="mb-0">
-                Tempor erat elitr rebum clita dolor diam ipsum sit diam amet
-                diam eos erat ipsum et lorem et sit sed stet lorem sit
-              </p>
-            </div>
-          </div>
-          <div
-            className="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp"
-            data-wow-delay="0.5s"
-          >
-            <div className="position-relative border border-primary pt-5 pb-4 px-4">
-              <div
-                className="d-inline-flex align-items-center justify-content-center bg-primary rounded-circle position-absolute top-0 start-50 translate-middle shadow"
-                style={{ width: 100, height: 100 }}
-              >
-                <i className="fa fa-plane fa-3x text-white" />
-              </div>
-              <h5 className="mt-4">Fly Today</h5>
-              <hr className="w-25 mx-auto bg-primary mb-1" />
-              <hr className="w-50 mx-auto bg-primary mt-0" />
-              <p className="mb-0">
-                Tempor erat elitr rebum clita dolor diam ipsum sit diam amet
-                diam eos erat ipsum et lorem et sit sed stet lorem sit
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    {/* Process Start */}
-    {/* Booking Start */}
-    <div className="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div className="container-xxl py-5">
       <div className="container">
         <div className="booking p-5">
           <div className="row g-5 align-items-center">
             <div className="col-md-6 text-white">
-              <h6 className="text-white text-uppercase">Booking</h6>
-              <h1 className="text-white mb-4">Online Booking</h1>
-              <p className="mb-4">
-                Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit.
-                Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit.
-              </p>
-              <p className="mb-4">
-                Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit.
-                Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit,
-                sed stet lorem sit clita duo justo magna dolore erat amet
-              </p>
-              <a className="btn btn-outline-light py-3 px-5 mt-2" href="">
-                Read More
-              </a>
+              <h6 className="text-white text-uppercase">Đặt phòng</h6>
+              <h1 className="text-white mb-4">Đặt chỗ trực tuyến</h1>
+              <p className="mb-4">Chọn điểm đến yêu thích và đặt phòng ngay.</p>
             </div>
             <div className="col-md-6">
-              <h1 className="text-white mb-4">Book A Tour</h1>
-              <form>
+              <h1 className="text-white mb-4">Đặt tour</h1>
+              {errorMessage && <p style={{ color: "red", fontWeight: "bold" }}>{errorMessage}</p>}
+              <form onSubmit={handleSubmit}>
                 <div className="row g-3">
                   <div className="col-md-6">
                     <div className="form-floating">
                       <input
                         type="text"
                         className="form-control bg-transparent"
-                        id="name"
-                        placeholder="Your Name"
+                        name="name"
+                        placeholder="Tên"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
                       />
-                      <label htmlFor="name">Your Name</label>
+                      <label htmlFor="name">Tên</label>
                     </div>
                   </div>
                   <div className="col-md-6">
@@ -140,60 +110,59 @@ function Booking() {
                       <input
                         type="email"
                         className="form-control bg-transparent"
-                        id="email"
-                        placeholder="Your Email"
+                        name="email"
+                        placeholder="Email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
                       />
-                      <label htmlFor="email">Your Email</label>
+                      <label htmlFor="email">Email</label>
                     </div>
                   </div>
                   <div className="col-md-6">
-                    <div
-                      className="form-floating date"
-                      id="date3"
-                      data-target-input="nearest"
-                    >
+                    <div className="form-floating">
                       <input
-                        type="text"
-                        className="form-control bg-transparent datetimepicker-input"
-                        id="datetime"
-                        placeholder="Date & Time"
-                        data-target="#date3"
-                        data-toggle="datetimepicker"
+                        type="datetime-local"
+                        className="form-control bg-transparent"
+                        name="datetime"
+                        value={formData.datetime}
+                        onChange={handleChange}
+                        required
                       />
-                      <label htmlFor="datetime">Date &amp; Time</label>
+                      <label htmlFor="datetime">Ngày & Giờ</label>
                     </div>
                   </div>
                   <div className="col-md-6">
                     <div className="form-floating">
                       <select
                         className="form-select bg-transparent"
-                        id="select1"
+                        name="destination"
+                        value={formData.destination}
+                        onChange={handleChange}
                       >
-                        <option value={1}>Destination 1</option>
-                        <option value={2}>Destination 2</option>
-                        <option value={3}>Destination 3</option>
+                        <option value="Điểm đến 1">Điểm đến 1</option>
+                        <option value="Điểm đến 2">Điểm đến 2</option>
+                        <option value="Điểm đến 3">Điểm đến 3</option>
                       </select>
-                      <label htmlFor="select1">Destination</label>
+                      <label htmlFor="destination">Điểm đến</label>
                     </div>
                   </div>
                   <div className="col-12">
                     <div className="form-floating">
                       <textarea
                         className="form-control bg-transparent"
-                        placeholder="Special Request"
-                        id="message"
+                        placeholder="Yêu cầu đặc biệt"
+                        name="message"
+                        value={formData.message}
+                        onChange={handleChange}
                         style={{ height: 100 }}
-                        defaultValue={""}
                       />
-                      <label htmlFor="message">Special Request</label>
+                      <label htmlFor="message">Yêu cầu đặc biệt</label>
                     </div>
                   </div>
                   <div className="col-12">
-                    <button
-                      className="btn btn-outline-light w-100 py-3"
-                      type="submit"
-                    >
-                      Book Now
+                    <button className="btn btn-outline-light w-100 py-3" type="submit" disabled={loading}>
+                      {loading ? "⏳ Đang đặt phòng..." : "Đặt phòng & Gửi Email"}
                     </button>
                   </div>
                 </div>
@@ -203,9 +172,5 @@ function Booking() {
         </div>
       </div>
     </div>
-    {/* Booking Start */}
-    </div>
-  )
+  );
 }
-
-export default Booking

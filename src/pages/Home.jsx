@@ -8,7 +8,7 @@ export default function Home() {
           <div className="row justify-content-center py-5">
             <div className="col-lg-10 pt-lg-5 mt-lg-5 text-center">
               <h1 className="display-3 text-white mb-3 animated slideInDown">
-                Enjoy Your Vacation With Us
+              Tận hưởng kỳ nghỉ của bạn với chúng tôi
               </h1>
               <p className="fs-4 text-white mb-4 animated slideInDown">
                 Tempor erat elitr rebum at clita diam amet diam et eos erat
@@ -25,7 +25,7 @@ export default function Home() {
                   className="btn btn-primary rounded-pill py-2 px-4 position-absolute top-0 end-0 me-2"
                   style={{ marginTop: 7 }}
                 >
-                  Search
+                  Tìm kiếm
                 </button>
               </div>
             </div>
@@ -76,36 +76,36 @@ export default function Home() {
               <div className="col-sm-6">
                 <p className="mb-0">
                   <i className="fa fa-arrow-right text-primary me-2" />
-                  Handpicked Hotels
+                  Khách sạn được lựa chọn cẩn thận
                 </p>
               </div>
               <div className="col-sm-6">
                 <p className="mb-0">
                   <i className="fa fa-arrow-right text-primary me-2" />5 Star
-                  Accommodations
+                  Chỗ ở
                 </p>
               </div>
               <div className="col-sm-6">
                 <p className="mb-0">
                   <i className="fa fa-arrow-right text-primary me-2" />
-                  Latest Model Vehicles
+                  Xe mô hình mới nhất
                 </p>
               </div>
               <div className="col-sm-6">
                 <p className="mb-0">
                   <i className="fa fa-arrow-right text-primary me-2" />
-                  150 Premium City Tours
+                  150 Tour tham quan thành phố cao cấp
                 </p>
               </div>
               <div className="col-sm-6">
                 <p className="mb-0">
                   <i className="fa fa-arrow-right text-primary me-2" />
-                  24/7 Service
+                  24/7 Dịch vụ
                 </p>
               </div>
             </div>
             <a className="btn btn-primary py-3 px-5 mt-2" href="">
-              Read More
+            Đọc thêm
             </a>
           </div>
         </div>
@@ -117,16 +117,16 @@ export default function Home() {
       <div className="container">
         <div className="text-center wow fadeInUp" data-wow-delay="0.1s">
           <h6 className="section-title bg-white text-center text-primary px-3">
-            Services
+            Dịch vụ
           </h6>
-          <h1 className="mb-5">Our Services</h1>
+          <h1 className="mb-5">Dịch vụ của chúng tôi</h1>
         </div>
         <div className="row g-4">
           <div className="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
             <div className="service-item rounded pt-3">
               <div className="p-4">
                 <i className="fa fa-3x fa-globe text-primary mb-4" />
-                <h5>WorldWide Tours</h5>
+                <h5>Các chuyến du lịch vòng quanh thế giới</h5>
                 <p>
                   Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita
                   amet diam
@@ -138,7 +138,7 @@ export default function Home() {
             <div className="service-item rounded pt-3">
               <div className="p-4">
                 <i className="fa fa-3x fa-hotel text-primary mb-4" />
-                <h5>Hotel Reservation</h5>
+                <h5>Đặt phòng khách sạn</h5>
                 <p>
                   Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita
                   amet diam
@@ -150,7 +150,7 @@ export default function Home() {
             <div className="service-item rounded pt-3">
               <div className="p-4">
                 <i className="fa fa-3x fa-user text-primary mb-4" />
-                <h5>Travel Guides</h5>
+                <h5>Hướng dẫn du lịch</h5>
                 <p>
                   Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita
                   amet diam
@@ -162,7 +162,7 @@ export default function Home() {
             <div className="service-item rounded pt-3">
               <div className="p-4">
                 <i className="fa fa-3x fa-cog text-primary mb-4" />
-                <h5>Event Management</h5>
+                <h5>Quản lý sự kiện</h5>
                 <p>
                   Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita
                   amet diam
@@ -174,7 +174,7 @@ export default function Home() {
             <div className="service-item rounded pt-3">
               <div className="p-4">
                 <i className="fa fa-3x fa-globe text-primary mb-4" />
-                <h5>WorldWide Tours</h5>
+                <h5>Các chuyến du lịch vòng quanh thế giới</h5>
                 <p>
                   Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita
                   amet diam
@@ -186,7 +186,7 @@ export default function Home() {
             <div className="service-item rounded pt-3">
               <div className="p-4">
                 <i className="fa fa-3x fa-hotel text-primary mb-4" />
-                <h5>Hotel Reservation</h5>
+                <h5>Đặt phòng khách sạn</h5>
                 <p>
                   Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita
                   amet diam
@@ -198,7 +198,7 @@ export default function Home() {
             <div className="service-item rounded pt-3">
               <div className="p-4">
                 <i className="fa fa-3x fa-user text-primary mb-4" />
-                <h5>Travel Guides</h5>
+                <h5>Hướng dẫn du lịch</h5>
                 <p>
                   Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita
                   amet diam
@@ -210,7 +210,7 @@ export default function Home() {
             <div className="service-item rounded pt-3">
               <div className="p-4">
                 <i className="fa fa-3x fa-cog text-primary mb-4" />
-                <h5>Event Management</h5>
+                <h5>Quản lý sự kiện</h5>
                 <p>
                   Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita
                   amet diam
@@ -227,9 +227,9 @@ export default function Home() {
       <div className="container">
         <div className="text-center wow fadeInUp" data-wow-delay="0.1s">
           <h6 className="section-title bg-white text-center text-primary px-3">
-            Destination
+          Điểm đến
           </h6>
-          <h1 className="mb-5">Popular Destination</h1>
+          <h1 className="mb-5">Điểm đến phổ biến</h1>
         </div>
         <div className="row g-3">
           <div className="col-lg-7 col-md-6">
@@ -331,9 +331,9 @@ export default function Home() {
       <div className="container">
         <div className="text-center wow fadeInUp" data-wow-delay="0.1s">
           <h6 className="section-title bg-white text-center text-primary px-3">
-            Packages
+          Gói hàng
           </h6>
-          <h1 className="mb-5">Awesome Packages</h1>
+          <h1 className="mb-5">Gói tuyệt vời</h1>
         </div>
         <div className="row g-4 justify-content-center">
           <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
@@ -372,14 +372,14 @@ export default function Home() {
                     className="btn btn-sm btn-primary px-3 border-end"
                     style={{ borderRadius: "30px 0 0 30px" }}
                   >
-                    Read More
+                    Đọc thêm
                   </a>
                   <a
                     href="#"
                     className="btn btn-sm btn-primary px-3"
                     style={{ borderRadius: "0 30px 30px 0" }}
                   >
-                    Book Now
+                    Đặt ngay
                   </a>
                 </div>
               </div>
@@ -421,14 +421,14 @@ export default function Home() {
                     className="btn btn-sm btn-primary px-3 border-end"
                     style={{ borderRadius: "30px 0 0 30px" }}
                   >
-                    Read More
+                    Đọc thêm
                   </a>
                   <a
                     href="#"
                     className="btn btn-sm btn-primary px-3"
                     style={{ borderRadius: "0 30px 30px 0" }}
                   >
-                    Book Now
+                    Đặt ngay
                   </a>
                 </div>
               </div>
@@ -470,14 +470,14 @@ export default function Home() {
                     className="btn btn-sm btn-primary px-3 border-end"
                     style={{ borderRadius: "30px 0 0 30px" }}
                   >
-                    Read More
+                    Đọc thêm
                   </a>
                   <a
                     href="#"
                     className="btn btn-sm btn-primary px-3"
                     style={{ borderRadius: "0 30px 30px 0" }}
                   >
-                    Book Now
+                    Đặt ngay
                   </a>
                 </div>
               </div>
@@ -505,7 +505,7 @@ export default function Home() {
                 sed stet lorem sit clita duo justo magna dolore erat amet
               </p>
               <a className="btn btn-outline-light py-3 px-5 mt-2" href="">
-                Read More
+                Đọc thêm
               </a>
             </div>
             <div className="col-md-6">
@@ -557,11 +557,11 @@ export default function Home() {
                         className="form-select bg-transparent"
                         id="select1"
                       >
-                        <option value={1}>Destination 1</option>
-                        <option value={2}>Destination 2</option>
-                        <option value={3}>Destination 3</option>
+                        <option value={1}>Điểm đến 1</option>
+                        <option value={2}>Điểm đến 2</option>
+                        <option value={3}>Điểm đến 3</option>
                       </select>
-                      <label htmlFor="select1">Destination</label>
+                      <label htmlFor="select1">Điểm đến</label>
                     </div>
                   </div>
                   <div className="col-12">
@@ -573,7 +573,7 @@ export default function Home() {
                         style={{ height: 100 }}
                         defaultValue={""}
                       />
-                      <label htmlFor="message">Special Request</label>
+                      <label htmlFor="message">Yêu cầu đặc biệt</label>
                     </div>
                   </div>
                   <div className="col-12">
@@ -581,7 +581,7 @@ export default function Home() {
                       className="btn btn-outline-light w-100 py-3"
                       type="submit"
                     >
-                      Book Now
+                      Đặt ngay
                     </button>
                   </div>
                 </div>
@@ -597,9 +597,9 @@ export default function Home() {
       <div className="container">
         <div className="text-center pb-4 wow fadeInUp" data-wow-delay="0.1s">
           <h6 className="section-title bg-white text-center text-primary px-3">
-            Process
+          Quá trình
           </h6>
-          <h1 className="mb-5">3 Easy Steps</h1>
+          <h1 className="mb-5">3 bước dễ dàng</h1>
         </div>
         <div className="row gy-5 gx-4 justify-content-center">
           <div
@@ -671,9 +671,9 @@ export default function Home() {
       <div className="container">
         <div className="text-center wow fadeInUp" data-wow-delay="0.1s">
           <h6 className="section-title bg-white text-center text-primary px-3">
-            Travel Guide
+          Hướng dẫn du lịch
           </h6>
-          <h1 className="mb-5">Meet Our Guide</h1>
+          <h1 className="mb-5">Gặp gỡ hướng dẫn viên của chúng tôi</h1>
         </div>
         <div className="row g-4">
           <div className="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
@@ -721,8 +721,8 @@ export default function Home() {
                 </a>
               </div>
               <div className="text-center p-4">
-                <h5 className="mb-0">Full Name</h5>
-                <small>Designation</small>
+                <h5 className="mb-0">Họ và tên đầy đủ</h5>
+                <small>Chỉ định</small>
               </div>
             </div>
           </div>
@@ -785,9 +785,9 @@ export default function Home() {
       <div className="container">
         <div className="text-center">
           <h6 className="section-title bg-white text-center text-primary px-3">
-            Testimonial
+          Lời chứng thực
           </h6>
-          <h1 className="mb-5">Our Clients Say!!!</h1>
+          <h1 className="mb-5">Khách hàng của chúng tôi nói!!!</h1>
         </div>
         <div className="owl-carousel testimonial-carousel position-relative">
           <div className="testimonial-item bg-white text-center border p-4">
@@ -796,8 +796,8 @@ export default function Home() {
               src="assets/img/testimonial-1.jpg"
               style={{ width: 80, height: 80 }}
             />
-            <h5 className="mb-0">John Doe</h5>
-            <p>New York, USA</p>
+            <h5 className="mb-0">Viết Quý</h5>
+            <p>Quảng Nam</p>
             <p className="mb-0">
               Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit diam
               amet diam et eos. Clita erat ipsum et lorem et sit.
@@ -809,8 +809,8 @@ export default function Home() {
               src="assets/img/testimonial-2.jpg"
               style={{ width: 80, height: 80 }}
             />
-            <h5 className="mb-0">John Doe</h5>
-            <p>New York, USA</p>
+            <h5 className="mb-0">Ngọc Thành</h5>
+            <p>Thanh Hóa</p>
             <p className="mt-2 mb-0">
               Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit diam
               amet diam et eos. Clita erat ipsum et lorem et sit.
@@ -822,8 +822,8 @@ export default function Home() {
               src="assets/img/testimonial-3.jpg"
               style={{ width: 80, height: 80 }}
             />
-            <h5 className="mb-0">John Doe</h5>
-            <p>New York, USA</p>
+            <h5 className="mb-0">Công Tú</h5>
+            <p>Bình Định</p>
             <p className="mt-2 mb-0">
               Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit diam
               amet diam et eos. Clita erat ipsum et lorem et sit.
@@ -835,8 +835,8 @@ export default function Home() {
               src="assets/img/testimonial-4.jpg"
               style={{ width: 80, height: 80 }}
             />
-            <h5 className="mb-0">John Doe</h5>
-            <p>New York, USA</p>
+            <h5 className="mb-0">Hữu Thịnh</h5>
+            <p>Huế</p>
             <p className="mt-2 mb-0">
               Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit diam
               amet diam et eos. Clita erat ipsum et lorem et sit.
