@@ -1,9 +1,14 @@
 import React, { useState } from "react";
-import { registerUser } from "../firebaseConfig"; // Hàm đăng ký Firebase
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
 
 export default function RegisterScreen() {
-  const [formData, setFormData] = useState({ email: "", password: "", fullName: "" });
+  const [formData, setFormData] = useState({ 
+    email: "", 
+    password: "", 
+    name: "",
+    birthday: "" 
+  });
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
@@ -22,44 +27,26 @@ export default function RegisterScreen() {
     try {
       console.log("🔥 Bắt đầu đăng ký tài khoản...");
 
-      // 🛠 Đăng ký tài khoản Firebase
-      const user = await registerUser(formData.email, formData.password);
-
-      console.log("✅ Firebase userCredential:", user);
-
-      if (!user || !user.uid) {
-        throw new Error("Không thể lấy UID từ Firebase.");
-      }
-
-      console.log("✅ Đã lấy UID:", user.uid);
-
-      // 📨 Gửi dữ liệu đăng ký đến backend (server.js)
-      const bodyData = {
+      // Gửi yêu cầu đăng ký đến API MongoDB
+      const response = await axios.post("http://localhost:5000/api/users/register", {
+        name: formData.name,
         email: formData.email,
-        fullName: formData.fullName || "Người dùng chưa đặt tên",
-        uid: user.uid, // ✅ Đảm bảo có UID
-      };
-
-      console.log("📤 Đang gửi dữ liệu đến backend:", bodyData);
-
-      const response = await fetch("http://localhost:5000/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bodyData),
+        password: formData.password,
+        birthday: formData.birthday
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.log("❌ Lỗi từ server:", errorData);
-        throw new Error(errorData.message || "Lỗi khi gửi dữ liệu đến server");
-      }
+      console.log("✅ Đăng ký thành công:", response.data);
 
-      console.log("✅ Phản hồi từ server:", await response.json());
-      alert("🎉 Đăng ký thành công! Email xác nhận đã được gửi.");
-      navigate("/login"); // Chuyển hướng sau khi đăng ký
+      // Lưu token vào localStorage
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.setItem("email", formData.email); // Lưu email để sử dụng ở ManageBooking
+
+      alert("🎉 Đăng ký thành công! Vui lòng đăng nhập để tiếp tục.");
+      navigate("/login"); // Chuyển hướng đến trang đăng nhập sau khi đăng ký
     } catch (error) {
-      console.error("❌ Lỗi toàn bộ quá trình:", error);
-      setErrorMessage(error.message);
+      console.error("❌ Lỗi đăng ký:", error);
+      setErrorMessage(error.response?.data?.message || "Lỗi khi đăng ký. Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
@@ -76,8 +63,8 @@ export default function RegisterScreen() {
           <label>👤 Họ và tên:</label>
           <input
             type="text"
-            name="fullName"
-            value={formData.fullName}
+            name="name"
+            value={formData.name}
             onChange={handleChange}
             required
             placeholder="Nhập họ và tên"
@@ -99,6 +86,18 @@ export default function RegisterScreen() {
         </div>
 
         <div style={{ marginBottom: "15px" }}>
+          <label>🎂 Ngày sinh:</label>
+          <input
+            type="date"
+            name="birthday"
+            value={formData.birthday}
+            onChange={handleChange}
+            required
+            style={{ width: "100%", padding: "8px", fontSize: "16px", marginTop: "5px" }}
+          />
+        </div>
+
+        <div style={{ marginBottom: "15px" }}>
           <label>🔒 Mật khẩu:</label>
           <input
             type="password"
@@ -114,6 +113,10 @@ export default function RegisterScreen() {
         <button type="submit" disabled={loading} style={{ width: "100%", padding: "10px", backgroundColor: loading ? "#ccc" : "#28a745", color: "white", fontSize: "16px", cursor: "pointer", border: "none", borderRadius: "5px" }}>
           {loading ? "Đang đăng ký..." : "Đăng ký"}
         </button>
+        
+        <p style={{ marginTop: "15px", fontSize: "14px", color: "#666" }}>
+          Đã có tài khoản? <Link to="/login" style={{ color: "#007bff", textDecoration: "none", fontWeight: "bold" }}>Đăng nhập ngay</Link>
+        </p>
       </form>
     </div>
   );

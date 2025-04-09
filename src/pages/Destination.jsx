@@ -35,7 +35,7 @@ function Destination() {
             <h6 className="section-title bg-white text-center text-primary px-3">
               Điểm đến
             </h6>
-            <h1 className="mb-5">Những điểm đến phổ biến</h1>
+            <h1 className="mb-5">Những điểm đến phổ biến tại Việt Nam</h1>
           </div>
           <div className="row g-3">
             <div className="col-lg-7 col-md-6">
@@ -54,7 +54,7 @@ function Destination() {
                       Giảm 30%
                     </div>
                     <div className="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">
-                      Thái Lan
+                      Đà Nẵng
                     </div>
                   </a>
                 </div>
@@ -72,7 +72,7 @@ function Destination() {
                       Giảm 25%
                     </div>
                     <div className="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">
-                      Malaysia
+                      Hà Nội
                     </div>
                   </a>
                 </div>
@@ -90,7 +90,7 @@ function Destination() {
                       Giảm 35%
                     </div>
                     <div className="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">
-                      Úc
+                      Nha Trang
                     </div>
                   </a>
                 </div>
@@ -112,7 +112,7 @@ function Destination() {
                   Giảm 20%
                 </div>
                 <div className="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">
-                  Indonesia
+                  Hồ Chí Minh
                 </div>
               </a>
             </div>

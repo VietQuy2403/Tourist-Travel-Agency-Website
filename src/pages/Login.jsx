@@ -1,26 +1,45 @@
 import React, { useState } from "react";
-import { loginUser } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError("");
+    
     try {
-      await loginUser(email, password);
+      const response = await axios.post("http://localhost:5000/api/users/login", {
+        email,
+        password
+      });
+      
+      // Lưu token và thông tin người dùng vào localStorage
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.setItem("email", email); // Lưu email để sử dụng ở ManageBooking
+      
+      console.log("Đăng nhập thành công! Email đã lưu:", email);
       alert("Đăng nhập thành công!");
       navigate("/");
     } catch (error) {
-      alert("Lỗi đăng nhập: " + error.message);
+      setError(error.response?.data?.message || "Lỗi khi đăng nhập. Vui lòng thử lại.");
+      alert("Lỗi đăng nhập: " + (error.response?.data?.message || error.message));
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div style={styles.container}>
       <h2 style={styles.title}>Đăng nhập</h2>
+      {error && <p style={styles.error}>{error}</p>}
       <form onSubmit={handleLogin} style={styles.form}>
         <div style={styles.inputGroup}>
           <span style={styles.icon}>📧</span>
@@ -46,7 +65,13 @@ const Login = () => {
           />
         </div>
 
-        <button type="submit" style={styles.button}>Đăng nhập</button>
+        <button 
+          type="submit" 
+          style={styles.button}
+          disabled={isLoading}
+        >
+          {isLoading ? "Đang xử lý..." : "Đăng nhập"}
+        </button>
       </form>
       <p style={styles.registerLink}>
         Chưa có tài khoản? <a href="/register" style={styles.link}>Đăng ký ngay</a>
@@ -111,20 +136,11 @@ const styles = {
     textDecoration: "none",
     fontWeight: "bold",
   },
+  error: {
+    color: "red",
+    fontSize: "14px",
+    marginBottom: "10px"
+  }
 };
-
-fetch("http://localhost:5678/webhook-test/xyz", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      email: "user@example.com",
-      message: "Đăng ký thành công!"
-    })
-  })
-  .then(response => response.json())
-  .then(data => console.log("Kết quả từ n8n:", data))
-  .catch(error => console.error("Lỗi:", error));
   
 export default Login;

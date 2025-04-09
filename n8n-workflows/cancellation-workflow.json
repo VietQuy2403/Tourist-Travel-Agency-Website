@@ -1,0 +1,161 @@
+{
+  "name": "Tour Cancellation Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "9650687e-eb23-48d4-bf85-a6692f35dade",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "9650687e-eb23-48d4-bf85-a6692f35dade",
+      "id": "b5d1cc12-bb74-4d07-b1fe-80f94dc22a1f"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.type }}",
+              "operation": "contains",
+              "value2": "cancellation"
+            }
+          ]
+        }
+      },
+      "name": "Is Cancellation?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        460,
+        300
+      ],
+      "id": "e1ba76c3-7ab5-4d39-8506-73e6ec6f5646"
+    },
+    {
+      "parameters": {
+        "fromEmail": "tourism@example.com",
+        "toEmail": "={{ $json.email }}",
+        "subject": "={{ $json.emailData.subject }}",
+        "text": "",
+        "html": "={{ 
+          // Lấy dữ liệu từ reminder
+          const booking = $json;
+          const trackingPixel = `<img src=\"http://localhost:5000/api/track-email-open/by-email/${booking.email}?type=cancellation\" width=\"1\" height=\"1\" />`;
+          
+          // Tạo nội dung email
+          let content = `
+          <div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 5px;\">
+            <div style=\"text-align: center; margin-bottom: 20px;\">
+              <h2 style=\"color: #d32f2f;\">Thông báo hủy tour</h2>
+            </div>
+            
+            <p>Xin chào <strong>${booking.name}</strong>,</p>
+            
+            <p>Chúng tôi thông báo rằng tour của bạn đã bị hủy:</p>
+            
+            <div style=\"background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 15px 0;\">
+              <p><strong>Điểm đến:</strong> ${booking.destination}</p>
+              <p><strong>Thời gian ban đầu:</strong> ${booking.emailData.templateData.datetime}</p>
+              <p><strong>Mã đặt tour:</strong> ${booking.bookingId}</p>
+              <p><strong>Thời gian hủy:</strong> ${booking.emailData.templateData.cancelledAt}</p>
+              <p><strong>Lý do hủy:</strong> ${booking.emailData.templateData.cancelReason}</p>
+            </div>
+            
+            <div style=\"background-color: #fef8f8; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #d32f2f;\">
+              <h3 style=\"color: #d32f2f; margin-top: 0;\">Thông tin quan trọng:</h3>
+              <ul>
+                <li>Nếu bạn đã thanh toán, khoản tiền sẽ được hoàn trả trong vòng 7 ngày làm việc</li>
+                <li>Bạn có thể đặt lại tour vào thời gian khác trên website của chúng tôi</li>
+                <li>Nếu cần hỗ trợ thêm, vui lòng liên hệ với chúng tôi qua số hotline</li>
+              </ul>
+            </div>
+            
+            <p>Chúng tôi chân thành xin lỗi vì sự bất tiện này và mong được phục vụ bạn trong tương lai.</p>
+            
+            <div style=\"margin-top: 30px; padding-top: 20px; border-top: 1px solid #eaeaea; text-align: center; color: #777;\">
+              <p>Trân trọng,<br>Đội ngũ Tourist Travel Agency</p>
+            </div>
+          </div>
+          ${trackingPixel}
+          `;
+          
+          return content;
+        }",
+        "additionalFields": {}
+      },
+      "name": "Send Cancellation Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        680,
+        200
+      ],
+      "id": "3fa82256-15a9-4a1b-9720-13c7b9511a56",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "1",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.email }}",
+        "text": "={{ `Thông báo: Tour đến ${$json.destination} của bạn đã bị hủy.\nLý do: ${$json.cancelReason}.\nVui lòng kiểm tra email để biết thêm chi tiết.` }}",
+        "additionalFields": {}
+      },
+      "name": "Send SMS Notification",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        400
+      ],
+      "id": "e3b7e8e7-5d4f-4d0c-9b18-7fb2ae13b7cb",
+      "credentials": {
+        "telegramApi": {
+          "id": "2",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Is Cancellation?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Cancellation?": {
+      "main": [
+        [
+          {
+            "node": "Send Cancellation Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send SMS Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+} 

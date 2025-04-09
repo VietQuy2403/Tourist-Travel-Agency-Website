@@ -64,6 +64,7 @@ function Header() {
               <Link to="/About" className="nav-item nav-link">Giới Thiệu</Link>
               <Link to="/Services" className="nav-item nav-link">Dịch Vụ</Link>
               <Link to="/Packages" className="nav-item nav-link">Gói Tour</Link>
+              <Link to="/manage-booking" className="nav-item nav-link">Quản Lý Tour</Link>
               <div className="nav-item dropdown">
                 <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                   Trang Khác

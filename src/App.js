@@ -13,6 +13,7 @@ import Testimonial from "./pages/Testimonial";
 import Contact from "./pages/Contact";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import ManageBooking from "./pages/ManageBooking";
 
 export default function App() {
   const location = useLocation();
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/manage-booking" element={<ManageBooking />} />
       </Routes>
       {!isAuthPage && <Footer />}
     </div>

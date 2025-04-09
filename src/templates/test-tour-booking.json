@@ -1,0 +1,11 @@
+{
+  "type": "booking_confirmation",
+  "bookingId": "test-booking-123",
+  "name": "Hồ Viết Quý",
+  "email": "quyhv.22ite@vku.udn.vn",
+  "datetime": "2025-03-30T14:00:00",
+  "destination": "Đà Lạt",
+  "message": "Test Google Calendar integration",
+  "amount": 2,
+  "action": "new_booking"
+} 

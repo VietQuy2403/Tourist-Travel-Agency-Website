@@ -50,3 +50,87 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Cài đặt
+
+```bash
+# Cài đặt các gói phụ thuộc
+npm install
+
+# Cài đặt các gói cụ thể (nếu cần)
+npm install process@0.11.10 --save-exact
+npm install stream-browserify@3.0.0 --save-dev --save-exact
+```
+
+## Khởi động ứng dụng
+
+```bash
+# Khởi động cả frontend và backend cùng lúc
+npm run start-all
+
+# Hoặc khởi động riêng lẻ:
+# Khởi động backend server
+npm run server
+
+# Khởi động frontend React
+npm start
+```
+
+## Truy cập ứng dụng
+
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:5000
+- Quản lý đặt tour: http://localhost:3000/manage-booking
+
+## Các thao tác cơ bản
+
+1. Đăng ký tài khoản mới
+2. Đăng nhập
+3. Đặt tour từ trang chủ
+4. Xem và quản lý các tour đã đặt
+
+## Cấu hình Tracking Pixel cho Email
+
+Để tracking pixel hoạt động khi người dùng mở email, bạn cần sử dụng một URL public thay vì localhost. Có hai cách:
+
+### Cách 1: Sử dụng ngrok (cho môi trường phát triển)
+
+1. Đăng ký tài khoản tại [ngrok.com](https://ngrok.com)
+2. Tải và cài đặt ngrok
+3. Chạy lệnh sau để tạo tunnel:
+   ```
+   ngrok http 5000
+   ```
+4. Ngrok sẽ tạo một URL public (ví dụ: https://abc123.ngrok.io)
+5. Sửa URL trong file `server.js`:
+   ```javascript
+   const PUBLIC_URL = process.env.PUBLIC_URL || 'https://abc123.ngrok.io'; // Thay đổi URL này
+   ```
+6. Khởi động lại server
+7. Sửa template email trong n8n để sử dụng URL ngrok:
+   ```html
+   <img src="https://abc123.ngrok.io/api/track-email-open/by-email/{{$json.email}}?type=register" width="1" height="1" alt="" />
+   ```
+
+### Cách 2: Sử dụng domain thật (cho môi trường production)
+
+1. Đăng ký một tên miền
+2. Cấu hình DNS trỏ đến server của bạn
+3. Cấu hình SSL để sử dụng HTTPS
+4. Thêm vào file `.env`:
+   ```
+   PUBLIC_URL=https://your-domain.com
+   ```
+5. Khởi động lại server
+6. Sửa template email trong n8n để sử dụng domain thật:
+   ```html
+   <img src="https://your-domain.com/api/track-email-open/by-email/{{$json.email}}?type=register" width="1" height="1" alt="" />
+   ```
+
+## Tự động hoá với n8n
+
+1. Đảm bảo n8n đang chạy: `n8n start`
+2. Tạo workflow cho đăng ký và đặt tour
+3. Cấu hình webhook node với đúng URL
+4. Thêm tracking pixel vào template email
+5. Kích hoạt workflow

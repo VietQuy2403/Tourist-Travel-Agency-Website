@@ -1,6 +1,131 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 export default function Home() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    datetime: '',
+    destination: 'Đà Nẵng',
+    message: ''
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/booking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      alert('Đặt tour thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.');
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        datetime: '',
+        destination: 'Đà Nẵng',
+        message: ''
+      });
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Có lỗi xảy ra khi đặt tour. Vui lòng thử lại sau.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Add datetimepicker CSS
+    const link1 = document.createElement("link");
+    link1.rel = "stylesheet";
+    link1.href = "assets/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css";
+    document.head.appendChild(link1);
+
+    // Load jQuery
+    const script1 = document.createElement("script");
+    script1.src = "https://code.jquery.com/jquery-3.4.1.min.js";
+    script1.async = true;
+    document.body.appendChild(script1);
+
+    // Load Moment.js
+    const script2 = document.createElement("script");
+    script2.src = "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js";
+    script2.async = true;
+    document.body.appendChild(script2);
+
+    // Load Bootstrap JS
+    const script3 = document.createElement("script");
+    script3.src = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js";
+    script3.async = true;
+    document.body.appendChild(script3);
+
+    // Load Tempusdominus Bootstrap 4
+    const script4 = document.createElement("script");
+    script4.src = "assets/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js";
+    script4.async = true;
+    document.body.appendChild(script4);
+
+    // Initialize datetimepicker
+    const script5 = document.createElement("script");
+    script5.textContent = `
+      window.addEventListener('load', function() {
+        if (typeof jQuery !== 'undefined' && typeof moment !== 'undefined') {
+          var $datetime = $('#datetime');
+          if ($datetime.length) {
+            $datetime.datetimepicker({
+              format: 'DD/MM/YYYY',
+              locale: 'vi',
+              useCurrent: false,
+              stepping: 15,
+              showClose: true,
+              showClear: true,
+              showTodayButton: true,
+              minDate: moment(),
+              maxDate: moment().add(1, 'year'),
+              icons: {
+                time: 'far fa-clock',
+                date: 'far fa-calendar',
+                up: 'fas fa-chevron-up',
+                down: 'fas fa-chevron-down',
+                previous: 'fas fa-chevron-left',
+                next: 'fas fa-chevron-right',
+                today: 'far fa-calendar-check',
+                clear: 'fas fa-trash',
+                close: 'fas fa-times'
+              }
+            });
+          }
+        }
+      });
+    `;
+    document.body.appendChild(script5);
+
+    return () => {
+      document.head.removeChild(link1);
+      document.body.removeChild(script1);
+      document.body.removeChild(script2);
+      document.body.removeChild(script3);
+      document.body.removeChild(script4);
+      document.body.removeChild(script5);
+    };
+  }, []);
+
   return (
     <div>
       <div className="container-fluid bg-primary py-5 mb-5 hero-header">
@@ -229,7 +354,7 @@ export default function Home() {
           <h6 className="section-title bg-white text-center text-primary px-3">
           Điểm đến
           </h6>
-          <h1 className="mb-5">Điểm đến phổ biến</h1>
+          <h1 className="mb-5">Điểm đến phổ biến tại Việt Nam</h1>
         </div>
         <div className="row g-3">
           <div className="col-lg-7 col-md-6">
@@ -248,10 +373,10 @@ export default function Home() {
                     alt=""
                   />
                   <div className="bg-white text-danger fw-bold position-absolute top-0 start-0 m-3 py-1 px-2">
-                    30% OFF
+                    Giảm 30%
                   </div>
                   <div className="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">
-                    Thailand
+                    Đà Nẵng
                   </div>
                 </a>
               </div>
@@ -269,10 +394,10 @@ export default function Home() {
                     alt=""
                   />
                   <div className="bg-white text-danger fw-bold position-absolute top-0 start-0 m-3 py-1 px-2">
-                    25% OFF
+                    Giảm 25%
                   </div>
                   <div className="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">
-                    Malaysia
+                    Hà Nội
                   </div>
                 </a>
               </div>
@@ -290,10 +415,10 @@ export default function Home() {
                     alt=""
                   />
                   <div className="bg-white text-danger fw-bold position-absolute top-0 start-0 m-3 py-1 px-2">
-                    35% OFF
+                    Giảm 35%
                   </div>
                   <div className="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">
-                    Australia
+                    Nha Trang
                   </div>
                 </a>
               </div>
@@ -315,10 +440,10 @@ export default function Home() {
                 style={{ objectFit: "cover" }}
               />
               <div className="bg-white text-danger fw-bold position-absolute top-0 start-0 m-3 py-1 px-2">
-                20% OFF
+                Giảm 20%
               </div>
               <div className="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">
-                Indonesia
+                Hồ Chí Minh
               </div>
             </a>
           </div>
@@ -344,13 +469,13 @@ export default function Home() {
               <div className="d-flex border-bottom">
                 <small className="flex-fill text-center border-end py-2">
                   <i className="fa fa-map-marker-alt text-primary me-2" />
-                  Thailand
+                  Đà Nẵng
                 </small>
                 <small className="flex-fill text-center border-end py-2">
-                  <i className="fa fa-calendar-alt text-primary me-2" />3 days
+                  <i className="fa fa-calendar-alt text-primary me-2" />3 ngày
                 </small>
                 <small className="flex-fill text-center py-2">
-                  <i className="fa fa-user text-primary me-2" />2 Person
+                  <i className="fa fa-user text-primary me-2" />2 Người
                 </small>
               </div>
               <div className="text-center p-4">
@@ -393,13 +518,13 @@ export default function Home() {
               <div className="d-flex border-bottom">
                 <small className="flex-fill text-center border-end py-2">
                   <i className="fa fa-map-marker-alt text-primary me-2" />
-                  Indonesia
+                  Hà Nội
                 </small>
                 <small className="flex-fill text-center border-end py-2">
-                  <i className="fa fa-calendar-alt text-primary me-2" />3 days
+                  <i className="fa fa-calendar-alt text-primary me-2" />3 ngày
                 </small>
                 <small className="flex-fill text-center py-2">
-                  <i className="fa fa-user text-primary me-2" />2 Person
+                  <i className="fa fa-user text-primary me-2" />2 Người
                 </small>
               </div>
               <div className="text-center p-4">
@@ -442,13 +567,13 @@ export default function Home() {
               <div className="d-flex border-bottom">
                 <small className="flex-fill text-center border-end py-2">
                   <i className="fa fa-map-marker-alt text-primary me-2" />
-                  Malaysia
+                  Nha Trang
                 </small>
                 <small className="flex-fill text-center border-end py-2">
-                  <i className="fa fa-calendar-alt text-primary me-2" />3 days
+                  <i className="fa fa-calendar-alt text-primary me-2" />3 ngày
                 </small>
                 <small className="flex-fill text-center py-2">
-                  <i className="fa fa-user text-primary me-2" />2 Person
+                  <i className="fa fa-user text-primary me-2" />2 Người
                 </small>
               </div>
               <div className="text-center p-4">
@@ -487,111 +612,6 @@ export default function Home() {
       </div>
     </div>
     {/* Package End */}
-    {/* Booking Start */}
-    <div className="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
-      <div className="container">
-        <div className="booking p-5">
-          <div className="row g-5 align-items-center">
-            <div className="col-md-6 text-white">
-              <h6 className="text-white text-uppercase">Booking</h6>
-              <h1 className="text-white mb-4">Online Booking</h1>
-              <p className="mb-4">
-                Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit.
-                Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit.
-              </p>
-              <p className="mb-4">
-                Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit.
-                Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit,
-                sed stet lorem sit clita duo justo magna dolore erat amet
-              </p>
-              <a className="btn btn-outline-light py-3 px-5 mt-2" href="">
-                Đọc thêm
-              </a>
-            </div>
-            <div className="col-md-6">
-              <h1 className="text-white mb-4">Book A Tour</h1>
-              <form>
-                <div className="row g-3">
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="text"
-                        className="form-control bg-transparent"
-                        id="name"
-                        placeholder="Your Name"
-                      />
-                      <label htmlFor="name">Your Name</label>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="email"
-                        className="form-control bg-transparent"
-                        id="email"
-                        placeholder="Your Email"
-                      />
-                      <label htmlFor="email">Your Email</label>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div
-                      className="form-floating date"
-                      id="date3"
-                      data-target-input="nearest"
-                    >
-                      <input
-                        type="text"
-                        className="form-control bg-transparent datetimepicker-input"
-                        id="datetime"
-                        placeholder="Date & Time"
-                        data-target="#date3"
-                        data-toggle="datetimepicker"
-                      />
-                      <label htmlFor="datetime">Date &amp; Time</label>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <select
-                        className="form-select bg-transparent"
-                        id="select1"
-                      >
-                        <option value={1}>Điểm đến 1</option>
-                        <option value={2}>Điểm đến 2</option>
-                        <option value={3}>Điểm đến 3</option>
-                      </select>
-                      <label htmlFor="select1">Điểm đến</label>
-                    </div>
-                  </div>
-                  <div className="col-12">
-                    <div className="form-floating">
-                      <textarea
-                        className="form-control bg-transparent"
-                        placeholder="Special Request"
-                        id="message"
-                        style={{ height: 100 }}
-                        defaultValue={""}
-                      />
-                      <label htmlFor="message">Yêu cầu đặc biệt</label>
-                    </div>
-                  </div>
-                  <div className="col-12">
-                    <button
-                      className="btn btn-outline-light w-100 py-3"
-                      type="submit"
-                    >
-                      Đặt ngay
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    {/* Booking Start */}
     {/* Process Start */}
     <div className="container-xxl py-5">
       <div className="container">

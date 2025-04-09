@@ -1,78 +1,126 @@
 import React, { useState } from "react";
-import { db } from "../firebaseConfig";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import MomoPayment from "../components/MomoPayment";
+import { useNavigate } from "react-router-dom";
 
 export default function Booking() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    datetime: "",
-    destination: "Điểm đến 1",
-    message: "",
+    departureDate: "",
+    departureTime: "08:00", // Thêm giờ bay mặc định
+    departureCity: "Hà Nội",
+    arrivalCity: "TP. Hồ Chí Minh",
+    flightClass: "Economy",
+    passengers: 1,
+    amount: 1500000, // Giá vé mặc định (đơn vị VND)
   });
 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPayment, setShowPayment] = useState(false);
+  const [bookingId, setBookingId] = useState(null);
 
   // ✅ Cập nhật form khi người dùng nhập
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ Xử lý đặt phòng
+  // ✅ Xử lý đặt vé
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMessage("");
-
     try {
-      console.log("🚀 Bắt đầu gửi booking...");
-
-      // Kiểm tra Firestore có hoạt động không
-      const testQuery = await getDocs(collection(db, "bookings"));
-      console.log("✅ Firestore hoạt động:", testQuery.docs.length, "documents.");
-
-      // ✅ Thêm vào Firestore
-      const bookingRef = await addDoc(collection(db, "bookings"), {
+      console.log('🚀 Bắt đầu gửi đặt vé...');
+      
+      // Kết hợp ngày và giờ
+      const dateTime = new Date(formData.departureDate);
+      const [hours, minutes] = formData.departureTime.split(':');
+      dateTime.setHours(parseInt(hours), parseInt(minutes));
+      
+      const bookingData = {
         ...formData,
-        createdAt: new Date(),
-        paymentStatus: "pending",
+        departureDate: dateTime.toISOString()
+      };
+      
+      console.log('📋 Dữ liệu đặt vé:', bookingData);
+
+      const response = await fetch('http://localhost:5000/api/booking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookingData),
       });
 
-      console.log("🔥 Đặt phòng thành công! ID:", bookingRef.id);
-      alert("🎉 Đặt phòng thành công! Email xác nhận sẽ được gửi.");
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
 
-      // ✅ Gửi request đến backend
+      const data = await response.json();
+      console.log('✅ Response từ server:', data);
+
+      if (data.success) {
+        console.log('🔥 Đặt vé thành công!');
+        console.log('📋 Chi tiết đặt vé:', {
+          id: data.data._id,
+          name: data.data.name,
+          email: data.data.email,
+          departureDate: data.data.departureDate,
+          departureCity: data.data.departureCity,
+          arrivalCity: data.data.arrivalCity,
+          flightClass: data.data.flightClass,
+          passengers: data.data.passengers
+        });
+        
+        // Lưu thông tin đặt vé vào localStorage để sử dụng ở trang thanh toán
+        localStorage.setItem('bookingData', JSON.stringify({
+          bookingId: data.data._id,
+          amount: data.data.totalPrice || data.data.amount * data.data.passengers
+        }));
+        
+        // Chuyển hướng đến trang thanh toán
+        navigate('/payment');
+      } else {
+        console.error('❌ Lỗi đặt vé:', data.message);
+        alert('Có lỗi xảy ra khi đặt vé. Vui lòng thử lại sau.');
+      }
+    } catch (error) {
+      console.error('❌ Lỗi khi gửi request:', error);
+      alert('Có lỗi xảy ra khi đặt vé. Vui lòng thử lại sau.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Xử lý thanh toán thành công
+  const handlePaymentSuccess = async () => {
+    try {
       const backendURL = "http://localhost:5000/api/booking";
-      console.log("📡 Gửi request đến backend:", backendURL);
-
       const response = await fetch(backendURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          datetime: formData.datetime,
-          destination: formData.destination,
-          message: formData.message || "Không có yêu cầu đặc biệt",
-          orderId: bookingRef.id,
+          departureDate: formData.departureDate,
+          departureCity: formData.departureCity,
+          arrivalCity: formData.arrivalCity,
+          flightClass: formData.flightClass,
+          passengers: formData.passengers,
+          orderId: bookingId,
         }),
       });
 
-      const responseData = await response.json();
-      
       if (!response.ok) {
-        console.error("❌ Lỗi từ backend:", responseData);
-        throw new Error(responseData.message || "Lỗi không xác định từ server.");
+        throw new Error("Lỗi gửi email xác nhận");
       }
 
-      console.log("✅ API backend gửi thành công!", responseData);
-      alert("📩 Email xác nhận đặt phòng đã được gửi!");
+      alert("🎉 Đặt vé và thanh toán thành công! Email xác nhận sẽ được gửi.");
+      setShowPayment(false);
     } catch (error) {
-      console.error("❌ Lỗi khi đặt phòng:", error);
+      console.error("❌ Lỗi cập nhật trạng thái:", error);
       setErrorMessage(error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -82,91 +130,155 @@ export default function Booking() {
         <div className="booking p-5">
           <div className="row g-5 align-items-center">
             <div className="col-md-6 text-white">
-              <h6 className="text-white text-uppercase">Đặt phòng</h6>
-              <h1 className="text-white mb-4">Đặt chỗ trực tuyến</h1>
-              <p className="mb-4">Chọn điểm đến yêu thích và đặt phòng ngay.</p>
+              <h6 className="text-white text-uppercase">Đặt vé máy bay</h6>
+              <h1 className="text-white mb-4">Đặt vé trực tuyến</h1>
+              <p className="mb-4">Chọn chuyến bay và đặt vé ngay.</p>
             </div>
             <div className="col-md-6">
-              <h1 className="text-white mb-4">Đặt tour</h1>
+              <h1 className="text-white mb-4">Đặt vé máy bay</h1>
               {errorMessage && <p style={{ color: "red", fontWeight: "bold" }}>{errorMessage}</p>}
-              <form onSubmit={handleSubmit}>
-                <div className="row g-3">
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="text"
-                        className="form-control bg-transparent"
-                        name="name"
-                        placeholder="Tên"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                      />
-                      <label htmlFor="name">Tên</label>
+              
+              {!showPayment ? (
+                <form onSubmit={handleSubmit}>
+                  <div className="row g-3">
+                    <div className="col-md-6">
+                      <div className="form-floating">
+                        <input
+                          type="text"
+                          className="form-control bg-transparent"
+                          name="name"
+                          placeholder="Tên"
+                          value={formData.name}
+                          onChange={handleChange}
+                          required
+                        />
+                        <label htmlFor="name">Tên</label>
+                      </div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="form-floating">
+                        <input
+                          type="email"
+                          className="form-control bg-transparent"
+                          name="email"
+                          placeholder="Email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          required
+                        />
+                        <label htmlFor="email">Email</label>
+                      </div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="form-floating">
+                        <input
+                          type="date"
+                          className="form-control bg-transparent"
+                          name="departureDate"
+                          value={formData.departureDate}
+                          onChange={handleChange}
+                          required
+                        />
+                        <label htmlFor="departureDate">Ngày khởi hành</label>
+                      </div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="form-floating">
+                        <input
+                          type="time"
+                          className="form-control bg-transparent"
+                          name="departureTime"
+                          value={formData.departureTime}
+                          onChange={handleChange}
+                          required
+                        />
+                        <label htmlFor="departureTime">Giờ khởi hành</label>
+                      </div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="form-floating">
+                        <select
+                          className="form-select bg-transparent"
+                          name="departureCity"
+                          value={formData.departureCity}
+                          onChange={handleChange}
+                        >
+                          <option value="Hà Nội">Hà Nội (HAN)</option>
+                          <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh (SGN)</option>
+                          <option value="Đà Nẵng">Đà Nẵng (DAD)</option>
+                          <option value="Nha Trang">Nha Trang (CXR)</option>
+                          <option value="Phú Quốc">Phú Quốc (PQC)</option>
+                          <option value="Đà Lạt">Đà Lạt (DLI)</option>
+                        </select>
+                        <label htmlFor="departureCity">Điểm khởi hành</label>
+                      </div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="form-floating">
+                        <select
+                          className="form-select bg-transparent"
+                          name="arrivalCity"
+                          value={formData.arrivalCity}
+                          onChange={handleChange}
+                        >
+                          <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh (SGN)</option>
+                          <option value="Hà Nội">Hà Nội (HAN)</option>
+                          <option value="Đà Nẵng">Đà Nẵng (DAD)</option>
+                          <option value="Nha Trang">Nha Trang (CXR)</option>
+                          <option value="Phú Quốc">Phú Quốc (PQC)</option>
+                          <option value="Đà Lạt">Đà Lạt (DLI)</option>
+                        </select>
+                        <label htmlFor="arrivalCity">Điểm đến</label>
+                      </div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="form-floating">
+                        <select
+                          className="form-select bg-transparent"
+                          name="flightClass"
+                          value={formData.flightClass}
+                          onChange={handleChange}
+                        >
+                          <option value="Economy">Hạng phổ thông</option>
+                          <option value="Premium Economy">Hạng phổ thông đặc biệt</option>
+                          <option value="Business">Hạng thương gia</option>
+                          <option value="First Class">Hạng nhất</option>
+                        </select>
+                        <label htmlFor="flightClass">Hạng vé</label>
+                      </div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="form-floating">
+                        <input
+                          type="number"
+                          className="form-control bg-transparent"
+                          name="passengers"
+                          min="1"
+                          max="9"
+                          value={formData.passengers}
+                          onChange={handleChange}
+                          required
+                        />
+                        <label htmlFor="passengers">Số hành khách</label>
+                      </div>
+                    </div>
+                    <div className="col-12">
+                      <button className="btn btn-outline-light w-100 py-3" type="submit" disabled={loading}>
+                        {loading ? "⏳ Đang xử lý..." : "Tiếp tục thanh toán"}
+                      </button>
                     </div>
                   </div>
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="email"
-                        className="form-control bg-transparent"
-                        name="email"
-                        placeholder="Email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                      />
-                      <label htmlFor="email">Email</label>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="datetime-local"
-                        className="form-control bg-transparent"
-                        name="datetime"
-                        value={formData.datetime}
-                        onChange={handleChange}
-                        required
-                      />
-                      <label htmlFor="datetime">Ngày & Giờ</label>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <select
-                        className="form-select bg-transparent"
-                        name="destination"
-                        value={formData.destination}
-                        onChange={handleChange}
-                      >
-                        <option value="Điểm đến 1">Điểm đến 1</option>
-                        <option value="Điểm đến 2">Điểm đến 2</option>
-                        <option value="Điểm đến 3">Điểm đến 3</option>
-                      </select>
-                      <label htmlFor="destination">Điểm đến</label>
-                    </div>
-                  </div>
-                  <div className="col-12">
-                    <div className="form-floating">
-                      <textarea
-                        className="form-control bg-transparent"
-                        placeholder="Yêu cầu đặc biệt"
-                        name="message"
-                        value={formData.message}
-                        onChange={handleChange}
-                        style={{ height: 100 }}
-                      />
-                      <label htmlFor="message">Yêu cầu đặc biệt</label>
-                    </div>
-                  </div>
-                  <div className="col-12">
-                    <button className="btn btn-outline-light w-100 py-3" type="submit" disabled={loading}>
-                      {loading ? "⏳ Đang đặt phòng..." : "Đặt phòng & Gửi Email"}
-                    </button>
-                  </div>
+                </form>
+              ) : (
+                <div className="payment-section bg-white p-4 rounded">
+                  <h3 className="mb-4">Thanh toán</h3>
+                  <MomoPayment
+                    amount={formData.amount}
+                    orderId={bookingId}
+                    onSuccess={handlePaymentSuccess}
+                  />
                 </div>
-              </form>
+              )}
             </div>
           </div>
         </div>
